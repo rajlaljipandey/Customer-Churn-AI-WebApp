@@ -63,44 +63,46 @@ predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
 
 # --------------------- PREDICTION ---------------------
 if predict_btn:
-
-    # Show processing animation
     with st.spinner("⏳ Processing input..."):
-        time.sleep(1.5)
+        time.sleep(1.3)
 
-    # Create DataFrame the model expects
     input_df = pd.DataFrame([[
         gender, senior, partner, dependents, tenure, phone, paperless
     ]], columns=['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'PaperlessBilling'])
 
-    # Encode Binary Columns
+    # Encode
     binary_cols = ['Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
     for col in binary_cols:
-        input_df[col] = input_df[col].map({'Yes': 1, 'No': 0})
+        input_df[col] = input_df[col].map({'Yes':1, 'No':0})
 
-    input_df['gender'] = input_df['gender'].map({'Male': 1, 'Female': 0})
+    input_df['gender'] = input_df['gender'].map({'Male':1,'Female':0})
 
-    # ---------------- MODEL PREDICTION ----------------
-    input_array = input_df.values      # <-- FIX HERE
+    # 🧠 FIX — Match model training columns
+    try:
+        expected_cols = model.feature_names_in_
+        for col in expected_cols:
+            if col not in input_df.columns:
+                input_df[col] = 0
+        input_df = input_df[expected_cols]
+    except:
+        pass
+
+    input_array = input_df.values
 
     pred = model.predict(input_array)[0]
     prob = model.predict_proba(input_array)[0][1]
 
-    # Result Output
     if pred == 1:
-        st.error("🔴 High Risk: Customer is likely to churn")
+        st.error("🔴 High Risk: Customer likely to churn")
     else:
-        st.success("🟢 Safe: Customer is unlikely to churn")
+        st.success("🟢 Safe: Customer unlikely to churn")
 
-    # Gauge / Progress Bar
-    st.write("📊 **Churn Probability:**")
+    st.write("📊 Churn Probability:")
     st.progress(int(prob * 100))
 
-    # ---- PDF Download ----
     file = generate_pdf(pred, prob)
     with open(file, "rb") as f:
-        st.download_button("📥 Download Report as PDF", data=f,
-                           file_name="Churn_Result.pdf", mime="application/pdf")
+        st.download_button("📥 Download PDF", data=f, file_name="Churn_Result.pdf", mime="application/pdf")
 
 # --------------------- FOOTER ---------------------
 st.markdown("""
