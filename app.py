@@ -68,9 +68,10 @@ with col2:
 # Button
 predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
 
+# ------------------------------------
 # Display Prediction
+# ------------------------------------
 if predict_btn:
-    if predict_btn:
     # ------------ PREPROCESS USER INPUT ------------
     input_df = pd.DataFrame([input_data], columns=[
         'gender', 'SeniorCitizen', 'Partner', 'Dependents',
@@ -83,17 +84,21 @@ if predict_btn:
 
     input_df['gender'] = input_df['gender'].map({'Male': 1, 'Female': 0})
 
+    # Final processed data
     input_data = input_df
 
-    # ------------ PREDICT ----------------
+    # ------------ Prediction ------------
     pred = model.predict(input_data)[0]
 
     if pred == 1:
-        st.error("⚠️ High Risk: Customer is likely to churn", icon="🚨")
+        st.error("🚨 High Risk: Customer is likely to churn", icon="⚠️")
     else:
-        st.success("🟢 Safe: Customer is unlikely to churn", icon="✅")
+        st.success("🟢 Safe: Customer is unlikely to churn", icon="😊")
 
+
+# ------------------------------------
 # Footer
+# ------------------------------------
 st.markdown("""
 <div class='footer'>
     Built by <b>Raj Lalji Pandey</b> using Streamlit & Machine Learning |
