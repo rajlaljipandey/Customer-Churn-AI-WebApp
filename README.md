@@ -4,7 +4,7 @@ An **end‑to‑end Machine Learning web application** that predicts whether a t
 
 🔗 **Live App:** [https://customer-churn-raj.streamlit.app/](https://customer-churn-raj.streamlit.app/)
 
-📁 **Repository:** *(add GitHub repo link here once available)*
+📁 **Repository:** [https://github.com/rajlaljipandey/Customer-Churn-AI-WebApp]
 
 ---
 
@@ -107,21 +107,14 @@ with a probability score.
 
 ---
 
-## 📸 Screenshots (Add After Upload)
-
-Paste scree
+## 📸 Screenshots
 
 ### 🧾 Input Form
-
-```
-![Input Form](screenshots/input-form.png)
-```
+![Input Form](screenshots/app-home.PNG)
 
 ### 📊 Prediction Output
+![Prediction Result](screenshots/app-result.PNG)
 
-```
-![Prediction Result](screenshots/app-result.png)
-```
 
 ---
 
