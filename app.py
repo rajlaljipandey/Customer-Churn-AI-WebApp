@@ -61,41 +61,46 @@ st.write("An intelligent ML-powered tool that predicts telecom customer churn ba
 
 predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
 
-# -------------------- DISPLAY PREDICTION --------------------
+# --------------------- PREDICTION ---------------------
 if predict_btn:
+
+    # Show processing animation
     with st.spinner("⏳ Processing input..."):
-        # Convert user input into DataFrame for model
-        input_df = pd.DataFrame([input_data], columns=[
-            'gender', 'SeniorCitizen', 'Partner', 'Dependents',
-            'tenure', 'PhoneService', 'PaperlessBilling'
-        ])
+        time.sleep(1.5)
 
-        # Encoding categories same as training
-        binary_cols = ['Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
-        for col in binary_cols:
-            input_df[col] = input_df[col].map({'Yes': 1, 'No': 0})
+    # Create DataFrame the model expects
+    input_df = pd.DataFrame([[
+        gender, senior, partner, dependents, tenure, phone, paperless
+    ]], columns=['gender', 'SeniorCitizen', 'Partner', 'Dependents', 'tenure', 'PhoneService', 'PaperlessBilling'])
 
-        input_df['gender'] = input_df['gender'].map({'Male': 1, 'Female': 0})
+    # Encode Binary Columns
+    binary_cols = ['Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
+    for col in binary_cols:
+        input_df[col] = input_df[col].map({'Yes': 1, 'No': 0})
 
-        # Run model
-        pred = model.predict(input_df)[0]
-        prob = model.predict_proba(input_df)[0][1]
+    input_df['gender'] = input_df['gender'].map({'Male': 1, 'Female': 0})
 
-        # Display result
-        if pred == 1:
-            st.error("🔴 High Risk: Customer is likely to churn")
-        else:
-            st.success("🟢 Safe: Customer is unlikely to churn")
+    # ---------------- MODEL PREDICTION ----------------
+    input_array = input_df.values      # <-- FIX HERE
 
-        # Gauge meter
-        st.write("### 📊 Churn Probability")
-        st.progress(int(prob * 100))
+    pred = model.predict(input_array)[0]
+    prob = model.predict_proba(input_array)[0][1]
 
-        # ---- PDF Download ----
-        file = generate_pdf(pred, prob)
-        with open(file, "rb") as f:
-            st.download_button("📥 Download Report as PDF", data=f, file_name="Churn_Result.pdf",
-                               mime="application/pdf")
+    # Result Output
+    if pred == 1:
+        st.error("🔴 High Risk: Customer is likely to churn")
+    else:
+        st.success("🟢 Safe: Customer is unlikely to churn")
+
+    # Gauge / Progress Bar
+    st.write("📊 **Churn Probability:**")
+    st.progress(int(prob * 100))
+
+    # ---- PDF Download ----
+    file = generate_pdf(pred, prob)
+    with open(file, "rb") as f:
+        st.download_button("📥 Download Report as PDF", data=f,
+                           file_name="Churn_Result.pdf", mime="application/pdf")
 
 # --------------------- FOOTER ---------------------
 st.markdown("""
