@@ -43,12 +43,14 @@ def preprocess_data():
 def generate_pdf(pred, prob):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=14)
+    pdf.set_font("Arial", size=16)
     pdf.cell(200, 10, txt="Customer Churn Prediction Report", ln=1, align='C')
-    pdf.ln(5)
+
     pdf.set_font("Arial", size=12)
+    pdf.ln(5)
     pdf.cell(200, 10, txt=f"Prediction: {'Customer WILL Churn' if pred == 1 else 'Customer will NOT Churn'}", ln=1)
     pdf.cell(200, 10, txt=f"Churn Probability: {prob:.2%}", ln=1)
+
     file_path = "churn_report.pdf"
     pdf.output(file_path)
     return file_path
@@ -67,7 +69,7 @@ if predict_btn:
         input_df = preprocess_data()
         pred = model.predict(input_df)[0]
 
-        # Probability (only if supported)
+        # Probability
         try:
             prob = model.predict_proba(input_df)[0][1]
         except:
@@ -79,7 +81,7 @@ if predict_btn:
     st.subheader("📊 Churn Probability")
     st.progress(int(prob * 100))
 
-    # ---- Result ----
+    # ---- Display Result ----
     if pred == 1:
         st.error("🚨 High Risk: Customer is LIKELY to churn!")
     else:
