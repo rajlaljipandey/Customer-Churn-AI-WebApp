@@ -1,127 +1,85 @@
 import streamlit as st
-import pandas as pd
 import joblib
+import numpy as np
 
-# =======================
-# Load ML Model
-# =======================
-MODEL_PATH = "model/churn_model.pkl"
-model = joblib.load(MODEL_PATH)
+# Load model
+model = joblib.load("model/churn_model.pkl")
 
-# =======================
-# Streamlit UI Styling
-# =======================
+# Page Configuration
 st.set_page_config(
-    page_title="Customer Churn Predictor",
+    page_title="Churn Prediction App",
     page_icon="📊",
     layout="wide"
 )
 
 # Custom CSS
 st.markdown("""
-    <style>
-    .header {
-        font-size: 32px;
-        font-weight: 700;
-        color: #2A4365;
-        text-align: center;
-        padding-bottom: 10px;
-    }
-    .subheader {
-        font-size: 18px;
-        color: #4A5568;
-        text-align: center;
-        padding-bottom: 25px;
+<style>
+    .main-title {
+        font-size: 38px;
+        font-weight: 800;
+        background: linear-gradient(to right, #3b82f6, #9333ea);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     .footer {
+        width: 100%;
         text-align: center;
-        font-size: 12px;
-        padding-top: 50px;
-        color: gray;
+        padding: 12px;
+        font-size: 14px;
+        color: #6b7280;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 50px;
     }
-    .result-box {
-        border-radius: 12px;
-        padding: 20px;
-        color: white;
-        font-size: 22px;
-        font-weight: bold;
-    }
-    .success {
-        background: #38A169;
-    }
-    .danger {
-        background: #E53E3E;
-    }
-    </style>
+</style>
 """, unsafe_allow_html=True)
 
-# =======================
-# Header
-# =======================
-st.markdown("<div class='header'>📊 Customer Churn Prediction App</div>", unsafe_allow_html=True)
-st.markdown("<div class='subheader'>An intelligent ML-powered tool that predicts which telecom customers are likely to leave</div>", unsafe_allow_html=True)
 
-st.write("---")
-
-# =======================
-# Sidebar Input
-# =======================
-st.sidebar.title("🔍 Input Customer Details")
+# Sidebar Input UI
+st.sidebar.header("🔍 Input Customer Details")
 
 gender = st.sidebar.selectbox("Gender", ["Male", "Female"])
-SeniorCitizen = st.sidebar.selectbox("Senior Citizen", [0, 1])
-Partner = st.sidebar.selectbox("Partner", ["Yes", "No"])
-Dependents = st.sidebar.selectbox("Dependents", ["Yes", "No"])
-tenure = st.sidebar.number_input("Tenure (months)", min_value=0, max_value=72, value=12)
-PhoneService = st.sidebar.selectbox("Phone Service", ["Yes", "No"])
-PaperlessBilling = st.sidebar.selectbox("Paperless Billing", ["Yes", "No"])
-MonthlyCharges = st.sidebar.number_input("Monthly Charges", min_value=0.0, max_value=200.0, value=70.0)
-TotalCharges = st.sidebar.number_input("Total Charges", min_value=0.0, max_value=10000.0, value=500.0)
+senior = st.sidebar.selectbox("Senior Citizen", [0, 1])
+partner = st.sidebar.selectbox("Partner", ["Yes", "No"])
+dependents = st.sidebar.selectbox("Dependents", ["Yes", "No"])
+tenure = st.sidebar.number_input("Tenure (months)", 1, 72, 12)
+phone = st.sidebar.selectbox("Phone Service", ["Yes", "No"])
+paperless = st.sidebar.selectbox("Paperless Billing", ["Yes", "No"])
 
-Contract = st.sidebar.selectbox("Contract", ["Month-to-month", "One year", "Two year"])
-InternetService = st.sidebar.selectbox("Internet Service", ["DSL", "Fiber optic", "No"])
-OnlineSecurity = st.sidebar.selectbox("Online Security", ["Yes", "No"])
-TechSupport = st.sidebar.selectbox("Tech Support", ["Yes", "No"])
+# Convert inputs
+def encode(val):
+    return 1 if val == "Yes" else 0
 
-# =======================
-# Data Convert
-# =======================
-input_data = pd.DataFrame({
-    "gender": [1 if gender == "Female" else 0],
-    "SeniorCitizen": [SeniorCitizen],
-    "Partner": [1 if Partner == "Yes" else 0],
-    "Dependents": [1 if Dependents == "Yes" else 0],
-    "tenure": [tenure],
-    "PhoneService": [1 if PhoneService == "Yes" else 0],
-    "PaperlessBilling": [1 if PaperlessBilling == "Yes" else 0],
-    "MonthlyCharges": [MonthlyCharges],
-    "TotalCharges": [TotalCharges],
-    "Contract_One year": [1 if Contract == "One year" else 0],
-    "Contract_Two year": [1 if Contract == "Two year" else 0],
-    "InternetService_Fiber optic": [1 if InternetService == "Fiber optic" else 0],
-    "InternetService_No": [1 if InternetService == "No" else 0],
-    "OnlineSecurity_Yes": [1 if OnlineSecurity == "Yes" else 0],
-    "TechSupport_Yes": [1 if TechSupport == "Yes" else 0],
-})
+input_data = np.array([[1 if gender == "Male" else 0,
+                        senior,
+                        encode(partner),
+                        encode(dependents),
+                        tenure,
+                        encode(phone),
+                        encode(paperless)]])
 
-# =======================
-# Predict
-# =======================
-if st.button("🚀 Predict Churn"):
-    prediction = model.predict(input_data)[0]
-    probability = model.predict_proba(input_data)[0][1]
+# ---- Main Layout ----
+col1, col2, col3 = st.columns([1,2,1])
+with col2:
+    st.markdown("<h1 class='main-title'>📱 Customer Churn Prediction</h1>", unsafe_allow_html=True)
+    st.write("An intelligent ML-powered tool that predicts which telecom customers are likely to leave.")
 
-    st.write("### 🧠 Prediction Result")
-    if prediction == 1:
-        st.markdown(
-            f"<div class='result-box danger'>⚠️ High Churn Risk — Probability: {probability:.2f}</div>",
-            unsafe_allow_html=True)
+# Button
+predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
+
+# Display Prediction
+if predict_btn:
+    pred = model.predict(input_data)[0]
+    if pred == 1:
+        st.error("🔴 High Risk: Customer is likely to churn", icon="⚠️")
     else:
-        st.markdown(
-            f"<div class='result-box success'>✅ Customer Likely to Stay — Probability: {probability:.2f}</div>",
-            unsafe_allow_html=True)
+        st.success("🟢 Safe: Customer is unlikely to churn", icon="💡")
 
-# =======================
 # Footer
-# =======================
-st.markdown("<div class='footer'>Built with ❤️ using Streamlit & Machine Learning | Ideal for Portfolio Projects</div>", unsafe_allow_html=True)
+st.markdown("""
+<div class='footer'>
+    Built by <b>Raj Lalji Pandey</b> using Streamlit & Machine Learning |
+    <a href='https://github.com/rajlaljipandey' target='_blank'>GitHub</a> ·
+    <a href='https://www.linkedin.com/in/raj-pandey-51288a237/' target='_blank'>LinkedIn</a>
+</div>
+""", unsafe_allow_html=True)
