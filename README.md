@@ -110,7 +110,7 @@ with a probability score.
 ## 📸 Screenshots
 
 ### 🧾 Input Form
-![Input Form](screenshots/app-home.PNG)
+![Input Form](screenshots/app-home.png)
 
 ### 📊 Prediction Output
 ![Prediction Result](screenshots/app-result.PNG)
