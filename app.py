@@ -38,36 +38,6 @@ st.markdown("""
 # Sidebar Input UI
 st.sidebar.header("🔍 Input Customer Details")
 
-gender = st.sidebar.selectbox("Gender", ["Male", "Female"])
-senior = st.sidebar.selectbox("Senior Citizen", [0, 1])
-partner = st.sidebar.selectbox("Partner", ["Yes", "No"])
-dependents = st.sidebar.selectbox("Dependents", ["Yes", "No"])
-tenure = st.sidebar.number_input("Tenure (months)", 1, 72, 12)
-phone = st.sidebar.selectbox("Phone Service", ["Yes", "No"])
-paperless = st.sidebar.selectbox("Paperless Billing", ["Yes", "No"])
-
-# Convert inputs
-def encode(val):
-    return 1 if val == "Yes" else 0
-
-input_data = np.array([[1 if gender == "Male" else 0,
-                        senior,
-                        encode(partner),
-                        encode(dependents),
-                        tenure,
-                        encode(phone),
-                        encode(paperless)]])
-
-# ---- Main Layout ----
-col1, col2, col3 = st.columns([1,2,1])
-with col2:
-    st.markdown("<h1 class='main-title'>📱 Customer Churn Prediction</h1>", unsafe_allow_html=True)
-    st.write("An intelligent ML-powered tool that predicts which telecom customers are likely to leave.")
-
-
-# Button
-predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
-
 # Collect user inputs
 gender = st.selectbox("Gender", ["Male", "Female"])
 SeniorCitizen = st.selectbox("Senior Citizen", [0, 1])
@@ -79,6 +49,17 @@ PaperlessBilling = st.selectbox("Paperless Billing", ["Yes", "No"])
 
 # Raw input list stored here 👇
 input_data = [gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, PaperlessBilling]
+# ---- Main Layout ----
+col1, col2, col3 = st.columns([1,2,1])
+with col2:
+    st.markdown("<h1 class='main-title'>📱 Customer Churn Prediction</h1>", unsafe_allow_html=True)
+    st.write("An intelligent ML-powered tool that predicts which telecom customers are likely to leave.")
+
+
+# Button
+predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
+
+
 
 # Display Prediction
 # ------------------------------------
