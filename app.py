@@ -71,7 +71,7 @@ predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
 # Display Prediction
 if predict_btn:
     if predict_btn:
-    # ----------- PREPROCESS USER INPUT -----------
+    # ------------ PREPROCESS USER INPUT ------------
     input_df = pd.DataFrame([input_data], columns=[
         'gender', 'SeniorCitizen', 'Partner', 'Dependents',
         'tenure', 'PhoneService', 'PaperlessBilling'
@@ -84,19 +84,14 @@ if predict_btn:
     input_df['gender'] = input_df['gender'].map({'Male': 1, 'Female': 0})
 
     input_data = input_df
-    # ----------------------------------------------
 
+    # ------------ PREDICT ----------------
     pred = model.predict(input_data)[0]
-    if pred == 1:
-        st.error("⚠ High Risk: Customer is likely to churn", icon="⚠")
-    else:
-        st.success("🟢 Safe: Customer is unlikely to churn", icon="✔")
 
-    pred = model.predict(input_data)[0]
     if pred == 1:
-        st.error("🔴 High Risk: Customer is likely to churn", icon="⚠️")
+        st.error("⚠️ High Risk: Customer is likely to churn", icon="🚨")
     else:
-        st.success("🟢 Safe: Customer is unlikely to churn", icon="💡")
+        st.success("🟢 Safe: Customer is unlikely to churn", icon="✅")
 
 # Footer
 st.markdown("""
