@@ -64,11 +64,34 @@ with col2:
     st.markdown("<h1 class='main-title'>📱 Customer Churn Prediction</h1>", unsafe_allow_html=True)
     st.write("An intelligent ML-powered tool that predicts which telecom customers are likely to leave.")
 
+
 # Button
 predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
 
 # Display Prediction
 if predict_btn:
+    if predict_btn:
+    # ----------- PREPROCESS USER INPUT -----------
+    input_df = pd.DataFrame([input_data], columns=[
+        'gender', 'SeniorCitizen', 'Partner', 'Dependents',
+        'tenure', 'PhoneService', 'PaperlessBilling'
+    ])
+
+    binary_cols = ['Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
+    for col in binary_cols:
+        input_df[col] = input_df[col].map({'Yes': 1, 'No': 0})
+
+    input_df['gender'] = input_df['gender'].map({'Male': 1, 'Female': 0})
+
+    input_data = input_df
+    # ----------------------------------------------
+
+    pred = model.predict(input_data)[0]
+    if pred == 1:
+        st.error("⚠ High Risk: Customer is likely to churn", icon="⚠")
+    else:
+        st.success("🟢 Safe: Customer is unlikely to churn", icon="✔")
+
     pred = model.predict(input_data)[0]
     if pred == 1:
         st.error("🔴 High Risk: Customer is likely to churn", icon="⚠️")
