@@ -68,7 +68,18 @@ with col2:
 # Button
 predict_btn = st.button("🚀 Predict Churn", use_container_width=True)
 
-# ------------------------------------
+# Collect user inputs
+gender = st.selectbox("Gender", ["Male", "Female"])
+SeniorCitizen = st.selectbox("Senior Citizen", [0, 1])
+Partner = st.selectbox("Partner", ["Yes", "No"])
+Dependents = st.selectbox("Dependents", ["Yes", "No"])
+tenure = st.number_input("Tenure (months)", min_value=0, max_value=72, step=1)
+PhoneService = st.selectbox("Phone Service", ["Yes", "No"])
+PaperlessBilling = st.selectbox("Paperless Billing", ["Yes", "No"])
+
+# Raw input list stored here 👇
+input_data = [gender, SeniorCitizen, Partner, Dependents, tenure, PhoneService, PaperlessBilling]
+
 # Display Prediction
 # ------------------------------------
 if predict_btn:
